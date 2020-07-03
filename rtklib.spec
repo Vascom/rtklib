@@ -10,7 +10,7 @@ Summary:        Program Package for GNSS Positioning
 
 License:        BSD
 URL:            http://www.rtklib.com
-Source0:        https://github.com/tomojitakasu/RTKLIB/tarball/c6e6c03143c5b397a9217fae2f6423ccf9c03fb7
+Source0:        https://github.com/tomojitakasu/RTKLIB/tarball/%{gitcommit_full}
 # Full readme from master branch
 Source1:        https://raw.githubusercontent.com/tomojitakasu/RTKLIB/master/readme.txt
 # https://github.com/JensReimann/RTKLIB/tree/rtklib_2.4.3
@@ -38,6 +38,20 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 %description    devel
 Include files and mandatory libraries for development.
 
+%package        qt
+Summary:        RTKLIB GUI tools
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description    qt
+GUI part of RTKLIB tools.
+
+%package        doc
+Summary:        RTKLIB manual
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description    doc
+Manual for RTKLIB tools.
+
 %prep
 %setup -n tomojitakasu-RTKLIB-%{gitcommit}
 cp %{SOURCE1} readme_orig.txt
@@ -46,7 +60,7 @@ cp %{SOURCE1} readme_orig.txt
 sed -e "s|target.path = /usr/lib|target.path = %{buildroot}%{_libdir}|" \
     -e "s|staticlib|sharedlib|" -i src/src.pro
 sed -i "s|LDLIBS  = ../../../lib/iers/gcc/iers.a|LDLIBS  = ../../../lib/libiers.a|" app/rnx2rtkp/gcc/makefile
-
+# Correct CLI tools build flags
 for i in %{tools_build}; do
     pushd app/$i/gcc
         sed -i "s|-O3|%{optflags}|" makefile
@@ -55,12 +69,15 @@ done
 
 
 %build
+# Build GUI tools
 %{qmake_qt5}
 %make_build
+# Build lib
 pushd lib
     %{qmake_qt5}
     %make_build
 popd
+# Build cli tools
 for i in %{tools_build}; do
     pushd app/$i/gcc
         %make_build
@@ -92,15 +109,7 @@ chrpath --delete %{buildroot}%{_bindir}/*_qt
 
 %files
 # %license add-license-file-here
-%doc readme.txt readme_orig.txt doc
-%{_bindir}/rtknavi_qt
-%{_bindir}/rtkget_qt
-%{_bindir}/rtkplot_qt
-%{_bindir}/rtkpost_qt
-%{_bindir}/rtklaunch_qt
-%{_bindir}/srctblbrows_qt
-%{_bindir}/strsvr_qt
-%{_bindir}/rtkconv_qt
+%doc readme.txt readme_orig.txt
 %{_bindir}/convbin
 %{_bindir}/pos2kml
 %{_bindir}/str2str
@@ -111,11 +120,23 @@ chrpath --delete %{buildroot}%{_bindir}/*_qt
 %{_libdir}/libRTKLib.so.1*
 %{_datadir}/%{name}/
 
+%files qt
+%{_bindir}/rtknavi_qt
+%{_bindir}/rtkget_qt
+%{_bindir}/rtkplot_qt
+%{_bindir}/rtkpost_qt
+%{_bindir}/rtklaunch_qt
+%{_bindir}/srctblbrows_qt
+%{_bindir}/strsvr_qt
+%{_bindir}/rtkconv_qt
+
+%files doc
+%doc doc
+
 %files devel
 %{_libdir}/libRTKLib.so
 
 
-
 %changelog
-* Wed Jul  1 2020 vascom <vascom2@gmail.com> - 2.4.3.b33-1
+* Wed Jul  1 2020 Vasiliy Glazov <vascom2@gmail.com> - 2.4.3.b33-1
 - Initial packaging
