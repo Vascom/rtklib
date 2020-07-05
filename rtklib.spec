@@ -64,6 +64,8 @@ GUI part of RTKLIB tools.
 
 %prep
 %setup -q -n tomojitakasu-RTKLIB-%{gitcommit}
+# License text not in separate file and not in packaged branch
+# https://github.com/tomojitakasu/RTKLIB/issues/540
 cp %{SOURCE1} readme_orig.txt
 %patch0 -p1
 
@@ -112,7 +114,24 @@ install -pm 755 app/str2str/gcc/str2str %{buildroot}%{_bindir}
 install -pm 755 app/rnx2rtkp/gcc/rnx2rtkp %{buildroot}%{_bindir}
 install -pm 755 app/rtkrcv/gcc/rtkrcv %{buildroot}%{_bindir}
 install -pm 755 app/rtkrcv/gcc/rtk*.sh %{buildroot}%{_bindir}
-install -pm 644 data/* %{buildroot}%{_datadir}/%{name}
+
+install -pm 644 data/P1C1_ALL.DCB %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/P1P2_ALL.DCB %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/P2C2.DCB %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/STA_GSI.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/STA_IGS.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/STA_IGS08.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/STA_IGS_H.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/STA_IGS_HR.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/STA_IGS_MGEX.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/TLE_GNSS_SATNO.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/TLE_GNSS_SIM.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/URL_LIST.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/elmask_sample.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/gnssdatasrc.txt %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/igs10P1565_wocov.snx %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/ngs_abs.pcv %{buildroot}%{_datadir}/%{name}/
+install -pm 644 data/stations.pos %{buildroot}%{_datadir}/%{name}/
 
 chrpath --delete %{buildroot}%{_bindir}/*_qt
 
